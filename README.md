@@ -40,6 +40,7 @@ OPTIONS:
     -a, --anvill <anvill-data>          Anvill disassembly data
     -b, --str-bsi <str-data>            STR BSI disassembly data
     -g, --ghidra <ghidra>               Ghidra disassembly data
+    -c, --callee                        Callee disassembly data
     -h, --help                          Print help information
     -l, --logging <level>               Set logging level explicitly
         --omit-functions                Avoid emitting DW_TAG_subprogram entries
@@ -65,8 +66,17 @@ $ dwarf-writer -a $ANVILL_JSON -b $STR_JSON -x /usr/bin/arm-linux-gnueabihf-objc
 $ llvm-dwarfdump $BINARY
 ```
 
+
+# Command example
+
+Usage from `target/release`
+
+./dwarf-writer -c ../../test/input.json ../../test/double ../../test/double_enhanced
+
 # Acknowledgements
 
 This material is based upon work supported by the Defense Advanced Research Projects Agency (DARPA) and Naval Information Warfare Center Pacific (NIWC Pacific) under Contract Number N66001-20-C-4027 and 140D0423C0063.
 
 Any opinions, findings and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the Defense Advanced Research Projects Agency (DARPA), NIWC Pacific, or its Contracting Agent, the U.S. Department of the Interior, Interior Business Center, Acquisition Services Directorate, Division III.
+
+
