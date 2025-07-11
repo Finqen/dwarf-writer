@@ -71,7 +71,7 @@ $ llvm-dwarfdump $BINARY
 
 Usage from `target/release`
 
-./dwarf-writer -c ../../test/input.json ../../test/double ../../test/double_enhanced
+> ./dwarf-writer -c ../../test/input.json ../../test/double ../../test/double_enhanced
 
 # Acknowledgements
 
