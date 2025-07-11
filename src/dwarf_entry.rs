@@ -1,5 +1,7 @@
 use crate::anvill::{AnvillFnMap, AnvillVarMap};
+use crate::callee::CalleeInfo;
 use crate::dwarf_attr::*;
+use crate::dwarf_constants::{DW_AT_definition, DW_AT_calls};
 use crate::elf::ELF;
 use crate::ghidra::GhidraData;
 use crate::str_bsi::StrFnMap;
@@ -39,6 +41,10 @@ impl<'a> EntryRef<'a> {
         EntryRef { elf, id }
     }
 
+    pub fn id(&self) -> UnitEntryId {
+        self.id
+    }
+
     fn unit_id(&self) -> UnitId {
         self.elf.dwarf.units.id(0)
     }
@@ -65,6 +71,28 @@ impl<'a> EntryRef<'a> {
         let id = self.id;
         let child_id = self.get_mut_unit().add(id, tag);
         EntryRef::new(self.elf, child_id)
+    }
+
+    /// Initializes a newly created callee entry with function call information.
+    pub fn init_callee(&mut self, function_name: String, callee_info: CalleeInfo) {
+        // Set the function name as DW_AT_name
+        self.set(DW_AT_name, AttributeValue::String(function_name.as_bytes().to_vec()));
+        
+        // Set the definition line as DW_AT_definition
+        self.set(DW_AT_definition, AttributeValue::Data8(callee_info.definition));
+        
+        // Set the calls as DW_AT_calls (comma-separated list as string)
+        let calls_str = callee_info.calls
+            .iter()
+            .map(|call| call.to_string())
+            .collect::<Vec<_>>()
+            .join(",");
+        self.set(DW_AT_calls, AttributeValue::String(calls_str.as_bytes().to_vec()));
+        
+        trace!("Created callee entry for function '{}' with definition at line {} and calls at lines [{}]", 
+               function_name, callee_info.definition, calls_str);
+        trace!("Entry will appear in DWARF output with tag 0x{:04x} (DW_TAG_callee)",    
+            crate::dwarf_constants::DW_TAG_callee.0);
     }
 
     pub fn init_ghidra_fn(&mut self, addr: u64, ghidra_data: &mut GhidraData, type_map: &TypeMap) {

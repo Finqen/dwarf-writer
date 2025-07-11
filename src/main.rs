@@ -1,4 +1,5 @@
 use crate::anvill::AnvillInput;
+use crate::callee::CalleeInput;
 use crate::dwarf_unit::DwarfUnitRef;
 use crate::elf::ELF;
 use crate::ghidra::GhidraInput;
@@ -13,7 +14,9 @@ use std::path::PathBuf;
 use std::{fs, io};
 
 mod anvill;
+mod callee;
 mod dwarf_attr;
+mod dwarf_constants;
 mod dwarf_entry;
 mod dwarf_unit;
 mod elf;
@@ -54,6 +57,14 @@ pub struct Opt {
         parse(from_os_str)
     )]
     ghidra_paths: Vec<PathBuf>,
+    #[clap(
+        name = "callee-data",
+        short = 'c',
+        long = "callee",
+        help = "Callee function call information",
+        parse(from_os_str)
+    )]
+    callee_paths: Vec<PathBuf>,
     #[clap(
         short = 'u',
         long = "use-all-str",
@@ -154,6 +165,12 @@ fn main() -> Result<()> {
     for path in &opt.str_bsi_paths {
         let input = StrBsiInput::new(path)?;
         dwarf.process_str_bsi(input.data(&opt), &mut type_map);
+    }
+
+    for path in &opt.callee_paths {
+        let input = CalleeInput::new(path)?;
+        let callee_data = input.data(&opt);
+        dwarf.process_callee(callee_data, &mut type_map);
     }
 
     elf.update_binary(

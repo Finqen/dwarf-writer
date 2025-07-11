@@ -1,5 +1,7 @@
 use crate::anvill::AnvillData;
+use crate::callee::CalleeData;
 use crate::dwarf_attr::{attr_to_entry_id, attr_to_u64, name_as_bytes};
+use crate::dwarf_constants::DW_TAG_callee;
 use crate::dwarf_entry::EntryRef;
 use crate::elf::ELF;
 use crate::ghidra::GhidraData;
@@ -310,6 +312,21 @@ impl<'a> DwarfUnitRef<'a> {
         for addr in remaining_fn_addrs {
             let mut fn_entry = self.new_entry(root, DW_TAG_subprogram);
             fn_entry.init_str_fn(addr, &mut fn_map, type_map);
+        }
+    }
+
+    /// Writes the callee data as DWARF debug info using a custom DW_TAG_callee.
+    /// Note: DW_TAG_callee is not a standard DWARF tag, but we'll use a vendor-specific value.
+    pub fn process_callee(&mut self, callee_data: CalleeData, _type_map: &mut TypeMap) {
+        let CalleeData { callees } = callee_data;
+        
+        let root = self.root();
+        
+        for (function_name, callee_info) in callees {
+            // Create a new entry with custom DW_TAG_callee
+            // Using DW_TAG_vendor_specific range (0x4080-0x40ff)
+            let mut callee_entry = self.new_entry(root, DW_TAG_callee);
+            callee_entry.init_callee(function_name, callee_info);
         }
     }
 }
