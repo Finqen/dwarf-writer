@@ -1,13 +1,9 @@
 use gimli::constants::*;
 
-// Custom DWARF tag for callee information
-// Using vendor-specific range to avoid conflicts with standard tags
-pub const DW_TAG_callee: DwTag = DwTag(0x40f0);
 
-// Custom DWARF attributes for callee information
-// Using vendor-specific attribute range (0x2000-0x3fff)
-pub const DW_AT_definition: DwAt = DwAt(0x3f00);
-pub const DW_AT_calls: DwAt = DwAt(0x3f01);
+pub const DW_TAG_callee: DwTag = DwTag(0x1d);
+pub const DW_AT_definition: DwAt = DwAt(0x3b);
+pub const DW_AT_calls: DwAt = DwAt(0x59);
 
 // Helper function to get tag name for debugging/display purposes
 pub fn get_tag_name(tag: DwTag) -> &'static str {
