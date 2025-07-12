@@ -28,4 +28,5 @@ pub struct CalleeInput {
 pub struct CalleeInfo {
     pub definition: u64,
     pub calls: Vec<u64>,
+    pub filename: Option<String>,
 }

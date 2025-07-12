@@ -3,12 +3,14 @@
         "definition": 1,
         "calls": [
             11
-        ]
+        ],
+	"filename": "/home/julian/projects/rust/test/dwarf-writer/test/double.c"
     },
     "foo": {
         "definition": 6,
         "calls": [
             12
-        ]
+        ],
+	"filename": "/home/julian/projects/rust/test/dwarf-writer/test/double.c"
     }
 }

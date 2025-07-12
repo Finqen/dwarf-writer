@@ -87,12 +87,13 @@ impl<'a> EntryRef<'a> {
             .map(|call| call.to_string())
             .collect::<Vec<_>>()
             .join(",");
+
         self.set(DW_AT_calls, AttributeValue::String(calls_str.as_bytes().to_vec()));
-        
-        trace!("Created callee entry for function '{}' with definition at line {} and calls at lines [{}]", 
-               function_name, callee_info.definition, calls_str);
-        trace!("Entry will appear in DWARF output with tag 0x{:04x} (DW_TAG_callee)",    
-            crate::dwarf_constants::DW_TAG_callee.0);
+
+        // Set the filename as DW_AT_decl_file if provided
+        if let Some(filename) = &callee_info.filename {
+            self.set(DW_AT_decl_file, AttributeValue::String(filename.as_bytes().to_vec()));
+        }
     }
 
     pub fn init_ghidra_fn(&mut self, addr: u64, ghidra_data: &mut GhidraData, type_map: &TypeMap) {
